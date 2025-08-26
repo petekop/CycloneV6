@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KOP CYCLONE — Boot</title>
+  <link rel="stylesheet" href="/static/css/boot.css">
+  <script>
+    window.onerror = function(message, source, lineno, colno, error) {
+      console.error('Unhandled error:', message, 'at', source + ':' + lineno + ':' + colno, error);
+    };
+  </script>
+  <script src="/static/js/boot.js?v=1" defer></script>
+  <script src="/overlay/script.js?v=1" defer></script>
+</head>
+<body>
+  <div class="boot-container">
+    <img src="/static/images/kop_cyclone_wall.png" class="bg" alt="background">
+    <div class="boot-content">
+      <img src="/static/images/kop_text.png" class="kop" alt="KOP">
+      <img src="/static/images/cyclone_text.png" class="cyclone" alt="CYCLONE">
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+      </div>
+      <div id="status-text" class="status-text"></div>
+    </div>
+  </div>
+
+<div id="status-report" style="color:#0f0; font-family:DIN, sans-serif; margin-top:20px;">
+  <div>🔌 OBS: <span id="stat-obs">🟡</span></div>
+  <div>🔊 Audio: <span id="stat-audio">🟡</span></div>
+  <div>📡 MediaMTX: <span id="stat-mtx">🟡</span></div>
+  <div>❤️ HR Logger: <span id="stat-hr">🟡</span></div>
+</div>
+
+<script>
+async function pollStatus() {
+  try {
+    const res = await fetch('/api/status-report');
+    const data = await res.json();
+    document.getElementById('stat-obs').textContent = data.obs ? '✅' : '❌';
+    document.getElementById('stat-audio').textContent = data.audio ? '✅' : '❌';
+    document.getElementById('stat-mtx').textContent = data.mtx ? '✅' : '❌';
+    document.getElementById('stat-hr').textContent = data.hr_logger ? '✅' : '❌';
+  } catch {
+    ['stat-obs','stat-audio','stat-mtx','stat-hr'].forEach(id => {
+      document.getElementById(id).textContent = '❌';
+    });
+  }
+}
+setInterval(pollStatus, 2000);
+pollStatus();
+</script>
+
+</body>
+</html>
