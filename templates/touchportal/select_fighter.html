@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Select Fighter</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/select_fighter.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/card_spin.css') }}">
+</head>
+<body>
+  <div id="carousel-container">
+    <header class="action-header">
+      <h1><span class="select">SELECT</span> <span class="fighter">FIGHTER</span></h1>
+      <div class="action-buttons">
+        <button class="neon-button" id="backBtn">Back</button>
+      </div>
+    </header>
+
+    <main id="fighterSelector">
+      <div id="filters">
+        <div class="filter-tabs">
+          <button class="filter-tab active" data-age="All">All</button>
+          <button class="filter-tab" data-age="Cadet">Cadets</button>
+          <button class="filter-tab" data-age="Adult">Adults</button>
+        </div>
+        <select id="division-filter">
+          <option value="All">All Divisions</option>
+          <!-- dynamically injected -->
+        </select>
+      </div>
+
+      <div id="cardWrapper">
+        <button id="prevBtn" class="nav-btn" data-spin-target="#fighterCard">&lt;</button>
+
+        <div id="fighterCard" class="fighter-card">
+          <div class="fighter-card-inner">
+            <!-- FRONT -->
+            <div class="fighter-card-front">
+              <img id="fighterFlag" class="flag" alt="Flag" />
+              <h2 id="fighterNameFront"></h2>
+              <img id="fighterStyle" class="style" alt="Style" />
+            </div>
+
+            <!-- BACK -->
+            <div class="fighter-card-back">
+              <div>Weight: <span id="fighterWeight"></span></div>
+              <div>Height: <span id="fighterHeight"></span></div>
+              <div>Stance: <span id="fighterStance"></span></div>
+
+              <div id="fighterRating"></div>
+              <div id="fighterStats"></div>
+
+              <canvas id="radarChart" width="200" height="200" style="display:none;"></canvas>
+              <canvas id="barChart" width="200" height="200" style="display:none;"></canvas>
+              <p id="performanceMessage" class="text-muted"></p>
+
+              <button class="neon-button" id="editBtn">Edit Profile</button>
+            </div>
+          </div>
+        </div>
+
+        <button id="nextBtn" class="nav-btn">&gt;</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- JS Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="/static/js/card_spin.js"></script>
+  <script src="/static/js/select_fighter.js"></script>
+</body>
+</html>

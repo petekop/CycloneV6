@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controller Status</title>
+  <style>
+    body { background:#000; color:#0f0; font-family: Arial, sans-serif; padding:40px; }
+    h1 { color: #ffef00; }
+    .status-line { margin-bottom: 10px; font-size: 1.4rem; }
+  </style>
+</head>
+<body>
+  <h1>Controller Status</h1>
+
+  <div class="status-line">
+    🎮 Red Controller:
+    {% if red.connected %}
+      ✅ Connected ({{ red.name }})
+    {% else %}
+      ❌ Not Found
+    {% endif %}
+  </div>
+
+  <div class="status-line">
+    🎮 Blue Controller:
+    {% if blue.connected %}
+      ✅ Connected ({{ blue.name }})
+    {% else %}
+      ❌ Not Found
+    {% endif %}
+  </div>
+
+  <button onclick="window.location.href='/system-tools'">⟲ BACK</button>
+</body>
+</html>

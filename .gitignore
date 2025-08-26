@@ -1,0 +1,75 @@
+__pycache__/
+*.pyc
+# Python virtual environments
+venv/
+venv.zip
+
+# Node dependencies
+node_modules/
+# Log files
+*.log
+logs/
+.vscode/
+.env
+*.tpz2
+*.png
+*.mp4
+# Windows shortcut files
+*.lnk
+# macOS Finder metadata
+.DS_Store
+
+# Windows shortcut files
+*.lnk
+
+# Test artifacts
+.pytest_cache/
+
+# Ignore runtime data
+FightControl/live_data/
+FightControl/cache/
+
+# Crash reports
+CONFIG/crashes/
+
+# Captured fight footage
+CAMSERVER/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/
+# MediaMTX binary
+CAMSERVER/mediamtx/mediamtx.exe
+# OBSCommand binary
+tools/OBSCommand/OBSCommand.exe
+# Updater utility
+CONFIG/updates/updater.exe
+# Zipped module archives
+modules/zipped/*.zip
+FightControl/static/images.zip
+FightControl/static/fonts.zip
+FightControl/static/buttons.zip
+# Track only flag and style images
+!FightControl/static/images/flags/*.png
+!FightControl/static/images/styles/*.png
+# Fighter-specific data
+FightControl/fighter_data/*
+!FightControl/fighter_data/.gitkeep
+!FightControl/fighter_data/README.md
+
+# Local dependency installation directory
+.deps_installed/
+# Cyclone runtime data
+FightControl/data/*.json
+FightControl/data/*.csv
+FightControl/data/*.log
+FightControl/overlay/*.png
+FightControl/overlay/*.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Local env
+.env
+
+FightControl/static/flags.zip

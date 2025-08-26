@@ -1,0 +1,11 @@
+<div class="fighter-card fighter-card-back">
+  <img src="{{ url_for('static', filename='images/cyclone_card_back.png') }}" class="card-bg blurred" alt="Cyclone card back"/>
+  <div class="card-stats">
+    <div>Height: {{ fighter.height }}</div>
+    <div>Weight: {{ fighter.weight }}</div>
+    <div>Record: {{ fighter.record }}</div>
+    <div>Stance: {{ fighter.stance }}</div>
+    <div>Endurance: {{ fighter.endurance if fighter.endurance is not none else 'N/A' }}</div>
+    <div>HR Zones: {{ fighter.hr_zones if fighter.hr_zones is not none else 'N/A' }}</div>
+  </div>
+</div>

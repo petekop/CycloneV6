@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>KOP CYCLONE — Main Menu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/touchportal.css') }}">
+  <style>
+    html, body {
+      min-height: 100%;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Orbitron', sans-serif;
+      overflow: hidden;
+      color: #0f0;
+      background-image: url('/static/images/kop_cyclone_wall.png'),
+                        linear-gradient(180deg, #0a0f1f, #071422);
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 0;
+    }
+
+    .top-bar {
+      position: absolute;
+      top: 10px;
+      right: 30px;
+      color: #0ff;
+      font-size: 1.2em;
+      text-align: right;
+      z-index: 2;
+      text-shadow: 0 0 10px #0ff;
+    }
+
+    .logo-center {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+    }
+
+    .logo-center img {
+      max-width: 80%;
+      height: auto;
+      margin: 10px 0;
+    }
+
+    .logo-center img:first-child {
+      filter: drop-shadow(0 0 25px #0ff);
+    }
+
+    .logo-center img:last-child {
+      filter: drop-shadow(0 0 25px #ff0);
+    }
+
+    .menu-container {
+      position: absolute;
+      top: 50%;
+      right: 80px;
+      transform: translateY(-50%);
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(2, 260px);
+      gap: 20px;
+    }
+
+    .coach {
+      grid-column: span 2;
+      background: rgba(0, 0, 0, 0.85);
+      color: #00ccff;
+      border-color: #00ccff;
+      font-size: 1.5rem;
+      box-shadow: 0 0 16px #00ccff;
+    }
+
+    .fighter-entry {
+      position: absolute;
+      top: 50%;
+      left: 100px;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.9);
+      border: 3px solid #00ff66;
+      border-radius: 14px;
+      padding: 30px;
+      width: 420px;
+      z-index: 10;
+      box-shadow: 0 0 30px #00ff66;
+      display: none;
+    }
+
+    .fighter-entry h2 {
+      color: yellow;
+      text-align: center;
+      font-size: 26px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px yellow;
+    }
+
+    .fighter-entry label {
+      display: block;
+      color: #0f0;
+      margin-top: 14px;
+    }
+
+    .fighter-entry select {
+      width: 100%;
+      padding: 10px;
+      background: #111;
+      border: 2px solid #0f0;
+      color: #fff;
+      font-size: 1rem;
+      margin-top: 5px;
+      border-radius: 6px;
+    }
+
+    .fighter-entry button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 12px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      background: lime;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 0 10px lime;
+    }
+
+    .fighter-entry .cancel {
+      background: #a00;
+      color: #fff;
+      margin-top: 10px;
+      box-shadow: 0 0 10px #a00;
+    }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: black;
+      color: #0ff;
+      border: 2px solid #0ff;
+      padding: 10px 20px;
+      font-size: 18px;
+      border-radius: 10px;
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 0 20px #0ff;
+    }
+
+    .reset-button {
+      position: absolute;
+      bottom: 20px;
+      right: 30px;
+      padding: 10px 20px;
+      font-size: 1.1em;
+      color: #fff;
+      background: #900;
+      border: 2px solid #f00;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #f00;
+      z-index: 2;
+    }
+
+    .reset-button:hover {
+      background: #f00;
+    }
+
+    .footer-legal {
+      position: absolute;
+      bottom: 10px;
+      left: 30px;
+      font-size: 0.85em;
+      color: #aaa;
+      z-index: 2;
+      text-shadow: 0 0 5px #000;
+    }
+
+    .fighter-list {
+      position: absolute;
+      top: 80px;
+      left: 30px;
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid #0f0;
+      border-radius: 8px;
+      padding: 10px 15px;
+      z-index: 2;
+    }
+
+    .fighter-list h3 {
+      margin-top: 0;
+      color: #0f0;
+      text-align: center;
+    }
+
+    .fighter-list ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .fighter-list li {
+      margin: 4px 0;
+    }
+
+    .fighter-list a {
+      color: #0f0;
+      text-decoration: none;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <div id="dateNow">-- --- ----</div>
+    <div id="timeNow">--:--</div>
+  </div>
+
+  <div class="logo-center">
+    <img src="/static/images/kop_text.png" alt="KOP">
+    <img src="/static/images/cyclone_text.png" alt="CYCLONE">
+  </div>
+
+  <div class="fighter-list">
+    <h3>Fighters</h3>
+    <ul>
+      {% for f in fighters %}
+        <li><a href="{{ url_for('fighter_page', safe_name=f.safe_name) }}">{{ f.name or f.safe_name }}</a></li>
+      {% else %}
+        <li>No fighters found</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="menu-container">
+    <div class="button" onclick="toggleEntry()">ENTER FIGHTERS</div>
+    <div class="button" onclick="window.location='/review-fighter'">CYCLONE REVIEW</div>
+    <div class="button" onclick="window.location='/system-tools'">SYSTEM TOOLS</div>
+    <div class="button" onclick="window.location='/create-edit-cyclone'">CREATE / EDIT CYCLONE FIGHTER</div>
+    <div class="button coach" onclick="window.open('/coaching-panel','coachingPanel')">COACH MODE</div>
+  </div>
+
+  <div class="fighter-entry" id="fighterEntry">
+    <h2>FIGHT ENTRY</h2>
+    <label>🔴 Red Fighter</label>
+    <select id="redName"></select>
+    <label>🔵 Blue Fighter</label>
+    <select id="blueName"></select>
+    <label>⏱ Round Format</label>
+    <select id="roundType" name="roundType">
+      <option value="">-- Select Format --</option>
+      <option value="3x0.25">3 x 0.25 min (debug)</option>
+      <option value="3x1">3 x 1 min</option>
+      <option value="3x2">3 x 2 min</option>
+      <option value="3x3">3 x 3 min</option>
+      <option value="5x1">5 x 1 min</option>
+      <option value="5x2">5 x 2 min</option>
+      <option value="5x3">5 x 3 min</option>
+    </select>
+    <label>💤 Rest Duration</label>
+    <select id="restDuration">
+      <option value="">-- Select Rest Time --</option>
+      <option value="15">15 seconds (debug)</option>
+      <option value="60">1 minute</option>
+      <option value="90">1.5 minutes</option>
+      <option value="120">2 minutes</option>
+    </select>
+    <button onclick="submitEntry()">CONFIRM</button>
+    <button class="cancel" onclick="toggleEntry()">CANCEL</button>
+  </div>
+
+  <div class="toast" id="toast">✅ FIGHT LOADED</div>
+  <button class="reset-button" onclick="resetSystem()">🔁 RESET SYSTEM</button>
+  <footer class="footer-legal">© 2025 Keep On Pushing UK LTD — KOPCODE™</footer>
+
+  <script>
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('timeNow').textContent = now.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+      document.getElementById('dateNow').textContent = now.toLocaleDateString(undefined, {day: 'numeric', month: 'short', year: 'numeric'});
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    function toggleEntry() {
+      fetch('/api/fighters')
+        .then(res => res.json())
+        .then(data => {
+          ['redName', 'blueName'].forEach(id => {
+            const sel = document.getElementById(id);
+            sel.innerHTML = '<option value="">-- Select Fighter --</option>';
+            data.forEach(f => {
+              const opt = document.createElement("option");
+              opt.value = f.name;
+              opt.textContent = f.name;
+              sel.appendChild(opt);
+            });
+          });
+        });
+      const modal = document.getElementById('fighterEntry');
+      modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function submitEntry() {
+      const red = document.getElementById('redName').value;
+      const blue = document.getElementById('blueName').value;
+      const round = document.getElementById('roundType').value;
+      const rest = document.getElementById('restDuration').value;
+
+      fetch('/enter-fighters', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: new URLSearchParams({ redName: red, blueName: blue, roundType: round, restDuration: rest })
+      })
+      .then(res => res.json())
+      .then(d => {
+        if (d.status === 'success') {
+          showToast('✅ FIGHT LOADED');
+          toggleEntry();
+          // Notify any open coaching panel to refresh its data
+          localStorage.setItem('fightUpdated', Date.now());
+          const panel = window.open('/coaching-panel', 'coachingPanel');
+          if (panel && !panel.closed) {
+            panel.postMessage('fightUpdated', '*');
+          }
+        } else {
+          alert('❌ ' + (d.message || 'Submission failed'));
+        }
+      });
+    }
+
+    async function resetSystem() {
+      const res = await fetch('/reset-system', { method: 'POST' });
+      const data = await res.json();
+      if (data.status === 'reset') {
+        // Clear any stored tag customizations so all panels reset
+        localStorage.removeItem('tagLabels');
+        localStorage.removeItem('tagColors');
+
+        // Broadcast a fight reset so any open windows can react
+        localStorage.setItem('fightReset', Date.now().toString());
+        window.dispatchEvent(new Event('fightReset'));
+
+        showToast('System Reset');
+        location.reload();
+      } else {
+        alert('Reset failed');
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+  </script>
+
+</body>
+</html>

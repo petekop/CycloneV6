@@ -1,0 +1,10 @@
+@keyframes cyclone-spin {
+  0%   { opacity: 0; transform: scale(0.1) rotateY(0deg);   filter: brightness(0.3) saturate(0.5); }
+  50%  { opacity: 1; transform: scale(1.1) rotateY(180deg); filter: brightness(1.5) saturate(2); }
+  100% { opacity: 1; transform: scale(1) rotateY(360deg);   filter: brightness(1) saturate(1); }
+}
+
+.spin-once {
+  animation: cyclone-spin 0.9s ease-in-out;
+  will-change: transform, opacity, filter;
+}

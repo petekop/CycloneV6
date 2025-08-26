@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyclone Boot</title>
+  <style>
+    body, html {height:100%; margin:0; display:flex; align-items:center; justify-content:center; background:#000; color:#0f0; font-family:sans-serif;}
+    .bar {width:80%; max-width:500px; border:3px solid #0ff; height:20px; border-radius:5px;}
+    .bar div {height:100%; width:0; background:#0ff; border-radius:3px; transition:width .3s;}
+    #status, #services, #metrics, #hr, #mtx, #obs {margin-top:10px; text-align:center;}
+    #services div {font-family:monospace; margin:2px 0;}
+    #startButton {margin-top:12px; padding:6px 12px; border:1px solid #0ff; background:#001416; color:#0ff; border-radius:6px; cursor:pointer;}
+    #startButton:hover {filter:brightness(1.2);}
+    #openButton {display:none; margin-top:12px; padding:6px 12px; border:1px solid #0ff; background:#001416; color:#0ff; border-radius:6px; cursor:pointer;}
+    #openButton:hover {filter:brightness(1.2);}
+    #retryButton {display:none; margin-top:12px; padding:6px 12px; border:1px solid #f00; background:#160000; color:#f00; border-radius:6px; cursor:pointer;}
+    #retryButton:hover {filter:brightness(1.2);}
+  </style>
+</head>
+<body>
+  <div style="text-align:center; width:100%;">
+    <div class="bar"><div id="progress"></div></div>
+    <div id="status"></div>
+    <div id="services"></div>
+    <div id="metrics"></div>
+    <div id="hr"></div>
+    <div id="hr-red"></div>
+    <div id="hr-blue"></div>
+    <div id="mtx"></div>
+    <div id="obs"></div>
+    <button id="startButton" onclick="startBoot()">Start System</button>
+    <button id="openButton">Open</button>
+    <button id="retryButton">Retry</button>
+    <div style="margin-top:10px;">
+      <a id="troubleshootLink" href="https://github.com/petekop/CycloneV4/wiki/Troubleshooting" target="_blank" style="color:#0ff;">Troubleshooting Guide</a>
+    </div>
+  </div>
+  <script src="/static/js/boot.js?v=2"></script>
+</body>
+</html>

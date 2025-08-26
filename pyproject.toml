@@ -1,0 +1,16 @@
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+select = ["E", "F", "B", "UP", "I"]
+extend-exclude = ["FightControl", "cyclone_server.py"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+markers = [
+    "timeout: mark tests with a timeout limit",
+]

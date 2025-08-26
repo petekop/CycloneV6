@@ -1,0 +1,6 @@
+{
+  "outputs": [],
+  "overlay_warmup_ms": 800,
+  "also_record_program": false,
+  "source_records": { "main_cam": 0 }
+}

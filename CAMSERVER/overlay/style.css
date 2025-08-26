@@ -1,0 +1,226 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: transparent;
+  overflow: hidden;
+}
+
+.overlay-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.fighter {
+  width: 30%;
+}
+
+.name-bar {
+  font-size: 28px;
+  font-weight: 900;
+  padding: 10px 16px;
+  color: white;
+  text-transform: uppercase;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.red-name {
+  background: linear-gradient(to right, #b70000, rgba(183, 0, 0, 0));
+  text-align: left;
+}
+
+.blue-name {
+  background: linear-gradient(to left, #0073e6, rgba(0, 115, 230, 0));
+  text-align: right;
+}
+
+.bpm-readout {
+  color: white;
+  font-weight: bold;
+  margin-top: 6px;
+  font-size: 20px;
+}
+
+.status-badge {
+  display: inline-block;
+  background: #666;
+  color: #fff;
+  padding: 2px 6px;
+  margin-left: 6px;
+  border-radius: 4px;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.status-badge.resting {
+  background: #00ffff;
+  color: #000;
+}
+
+.stamina-wrapper {
+  background: #444;
+  width: 100%;
+  height: 24px;
+  position: relative;
+  margin-top: 6px;
+}
+
+.stamina-bar {
+  height: 100%;
+  position: absolute;
+  top: 0;
+  transition: width 0.5s ease, background-color 0.5s;
+}
+
+.red-bar {
+  left: 0;
+  right: auto;
+  background: limegreen;
+  transform-origin: left;
+}
+
+.blue-bar {
+  right: 0;
+  left: auto;
+  background: limegreen;
+  transform-origin: right;
+}
+
+.blue .stamina-wrapper {
+  direction: rtl;
+}
+
+.effort-text {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: 0;
+  color: white;
+  font-size: 16px;
+  line-height: 24px;
+  pointer-events: none;
+}
+
+.hr-zone-text {
+  color: white;
+  font-size: 16px;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.blue .bpm-readout,
+.blue .effort-text,
+.blue .hr-zone-text {
+  text-align: right;
+  margin-right: 12px;
+}
+
+.round-box {
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  width: 280px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 12px;
+  margin-top: 10px;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+  position: relative;
+}
+
+.round {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+#roundRings {
+  margin-top: 6px;
+  font-size: 22px;
+  letter-spacing: 3px;
+}
+
+.timer {
+  font-size: 30px;
+  font-weight: bold;
+  margin-top: 4px;
+  text-shadow: 0 0 6px #00ffff;
+  position: relative;
+}
+
+.live-badge {
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translateX(-50%);
+  background: red;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.live-badge.resting {
+  background: #ffbf00;
+  color: #000;
+}
+
+.live-badge.paused {
+  background: #666;
+}
+
+.pulse {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    text-shadow: 0 0 6px lime;
+  }
+  50% {
+    text-shadow: 0 0 12px red;
+  }
+  100% {
+    text-shadow: 0 0 6px lime;
+  }
+}
+
+@keyframes flashRed {
+  0%,
+  100% {
+    background-color: #b70000;
+  }
+  50% {
+    background-color: #ff0000;
+  }
+}
+
+.fighter-photo {
+  display: none;
+}
+
+.hr-chart {
+  margin-top: 10px;
+  background: #111;
+  border: 2px solid #555;
+  border-radius: 6px;
+  transform: scale(1.25);
+}
+
+.red-chart {
+  position: absolute;
+  bottom: 80px;
+  left: 20px;
+}
+
+.blue-chart {
+  position: absolute;
+  bottom: 80px;
+  right: 20px;
+}

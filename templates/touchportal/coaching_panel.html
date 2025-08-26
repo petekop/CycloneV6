@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>KOP CYCLONE – Coaching Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet" />
+  <style>
+    html, body {
+      margin: 0; padding: 0;
+      width: 100vw; height: 100vh;
+      font-family: 'Orbitron', sans-serif;
+      background: #000 url('/static/images/kop_cyclone_wall.png') center center fixed no-repeat;
+      background-size: cover;
+      color: white;
+      overflow: hidden;
+    }
+
+    .layout { display: flex; height: 100%; }
+
+    .corner {
+      width: 25%;
+      display: flex;
+      flex-direction: column;
+      padding: 15px;
+      box-sizing: border-box;
+    }
+
+    .red-name {
+      background: linear-gradient(to right, #b70000, rgba(183, 0, 0, 0));
+      text-align: left;
+    }
+
+    .blue-name {
+      background: linear-gradient(to left, #0073e6, rgba(0, 115, 230, 0));
+      text-align: right;
+    }
+
+    .corner h2 {
+      font-size: 1.4em;
+      font-weight: bold;
+      padding: 10px 16px;
+      border-radius: 8px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .bpm { font-size: 1.1em; margin-bottom: 10px; }
+    .status-badge {
+      background: #666;
+      color: #fff;
+      padding: 2px 6px;
+      margin-left: 6px;
+      border-radius: 4px;
+      font-size: 0.9em;
+      text-transform: uppercase;
+    }
+    .status-badge.resting {
+      background: #00ffff;
+      color: #000;
+    }
+    .zone { font-size: 1em; margin-bottom: 6px; font-style: italic; }
+
+    .chart-box {
+      width: 100%;
+      height: 120px;
+      background: rgba(0, 0, 0, 0.6);
+      margin-bottom: 10px;
+    }
+
+    .chart-box canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .tag-buttons {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 100%;
+    }
+
+    .tag-buttons button {
+      flex: 1;
+      margin: 6px 0;
+      font-size: 2em;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform .2s;
+      outline: none;
+    }
+
+    .tag-buttons button:hover {
+      transform: scale(1.03);
+    }
+
+    .red-left { background: linear-gradient(to right, #b70000, rgba(183,0,0,0)); color: white; }
+    .red-right { background: linear-gradient(to left, #b70000, rgba(183,0,0,0)); color: white; }
+    .blue-left { background: linear-gradient(to right, #0073e6, rgba(0,115,230,0)); color: white; }
+    .blue-right { background: linear-gradient(to left, #0073e6, rgba(0,115,230,0)); color: white; }
+    .gray-btn { background: linear-gradient(to right, #555, #222); color: white; }
+
+    .preset-btn {
+      flex: 1;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1.2em;
+      background: linear-gradient(to right, #00ffff, #0066ff);
+      color: white;
+    }
+
+    .save-btn,
+    .close-btn {
+      padding: 15px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .summary-gallery {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .summary-gallery img {
+      width: 120px;
+      border: 2px solid #fff;
+      cursor: pointer;
+    }
+
+    .center {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      padding-top: 140px;
+      box-sizing: border-box;
+    }
+
+    .kop-logo {
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      text-align: center;
+    }
+
+    .kop-logo img {
+      display: block;
+      margin: 0 auto;
+      max-width: 160px;
+      height: auto;
+    }
+
+    .status-text {
+      font-size: 1.2em;
+      margin: 10px 0;
+      color: #ffd700;
+    }
+
+    #timer-status { margin: 2px 0; }
+
+    .timer {
+      font-size: 6em;
+      color: #00ff00;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+
+    .controls-btn {
+      width: 80%;
+      padding: 18px;
+      margin: 8px 0;
+      font-size: 1.4em;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(to right, #4caf50, #2e7d32);
+      color: white;
+      cursor: pointer;
+    }
+
+    .config-btn {
+      background: linear-gradient(to right, #888, #444);
+    }
+
+    .status-footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 0;
+      pointer-events: none;
+    }
+
+    .status-panel {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .status-item {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 1em;
+    }
+
+    .btn-back {
+      padding: 12px 20px;
+      margin-top: 10px;
+      font-size: 1em;
+      background: linear-gradient(to right, #555, #333);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      pointer-events: auto;
+    }
+
+    #configModal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.75);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+
+    #configBox {
+      background: #222;
+      padding: 50px;
+      border-radius: 10px;
+      border: 2px solid cyan;
+      box-shadow: 0 0 25px cyan;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 800px;
+      max-width: 90vw;
+    }
+
+    .config-section {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .config-section input {
+      display: block;
+      margin: 10px 0;
+      padding: 20px;
+      width: 100%;
+      border-radius: 10px;
+      border: none;
+      font-size: 1.2em;
+    }
+
+    .config-actions {
+      display: flex;
+      gap: 20px;
+    }
+
+    .save-btn {
+      background: #4caf50;
+      color: white;
+    }
+
+    .close-btn {
+      background: #777;
+      color: white;
+    }
+
+    .hide-charts .chart-box {
+      display: none;
+    }
+
+    .hide-charts .tag-buttons button {
+      font-size: 3em;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <!-- RED CORNER -->
+    <div class="corner">
+      <div class="red-name"><h2 id="redName">RED CORNER</h2></div>
+      <p class="bpm"><span style="color: red;">❤️</span> <span id="redBPM">-- bpm</span> (<span id="redEffort">--%</span>) <span id="redStatus" class="status-badge"></span></p>
+      <p class="zone"><em id="redZone">--Zone</em></p>
+      <div class="chart-box"><canvas id="redChart"></canvas></div>
+      <div class="tag-buttons" id="redTags">
+        <button class="red-left" id="redBtn1">Tag 1</button>
+        <button class="red-left" id="redBtn2">Tag 2</button>
+        <button class="red-left" id="redBtn3">Tag 3</button>
+      </div>
+    </div>
+
+    <!-- CENTER PANEL -->
+    <div class="center">
+      <div class="kop-logo">
+        <img src="/static/images/kop_text.png" alt="KOP" />
+        <img src="/static/images/cyclone_text.png" alt="CYCLONE" />
+      </div>
+      <div id="timer-status" class="status-text">LIVE</div>
+      <div id="timer" class="timer">00:00</div>
+      <button id="startBtn" class="controls-btn">START ROUND</button>
+      <button id="pauseBtn" class="controls-btn" disabled>PAUSE</button>
+      <button id="resumeBtn" class="controls-btn" disabled>RESUME</button>
+      <button id="configTags" class="controls-btn config-btn">⛭ Configure Tags</button>
+      <button id="toggleCharts" class="controls-btn">TOGGLE CHARTS</button>
+    </div>
+
+    <!-- BLUE CORNER -->
+    <div class="corner">
+      <div class="blue-name"><h2 id="blueName">BLUE CORNER</h2></div>
+      <p class="bpm"><span style="color: #00f;">💙</span> <span id="blueBPM">-- bpm</span> (<span id="blueEffort">--%</span>) <span id="blueStatus" class="status-badge"></span></p>
+      <p class="zone"><em id="blueZone">--Zone</em></p>
+      <div class="chart-box"><canvas id="blueChart"></canvas></div>
+      <div class="tag-buttons" id="blueTags">
+        <button class="blue-right" id="blueBtn1">Tag 1</button>
+        <button class="blue-right" id="blueBtn2">Tag 2</button>
+        <button class="blue-right" id="blueBtn3">Tag 3</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROUND SUMMARY IMAGE GALLERY -->
+  <div id="summaryGallery" class="summary-gallery"></div>
+
+  <!-- SYSTEM STATUS FOOTER -->
+  <div class="status-footer">
+    <div class="status-panel">
+      <div class="status-item">🎥 OBS: <span id="stat-obs">🟡</span></div>
+      <div class="status-item">🔊 Audio: <span id="stat-audio">🟡</span></div>
+      <div class="status-item">📡 MediaMTX: <span id="stat-mtx">🟡</span></div>
+      <div class="status-item">❤️ HR Logger: <span id="stat-hr">🟡</span></div>
+    </div>
+    <button class="btn-back" onclick="window.location.href='/index'">⬅ BACK</button>
+  </div>
+  <!-- TAG CONFIG MODAL -->
+  <div id="configModal">
+    <div id="configBox">
+      <h3>Configure Hot Tag Buttons</h3>
+
+      <!-- Input Fields for Both Corners -->
+      <div class="config-section">
+        <div>
+          <strong>🔴 Red Corner</strong><br />
+          <input id="red1" placeholder="Hands Down" />
+          <input id="red2" placeholder="Balance" />
+          <input id="red3" placeholder="No Rotation" />
+        </div>
+        <div>
+          <strong>🔵 Blue Corner</strong><br />
+          <input id="blue1" placeholder="Hands Down" />
+          <input id="blue2" placeholder="Balance" />
+          <input id="blue3" placeholder="No Rotation" />
+        </div>
+      </div>
+
+      <!-- Preset Buttons -->
+      <div class="config-section">
+        <button class="preset-btn" onclick="applyPreset('red')">All Red</button>
+        <button class="preset-btn" onclick="applyPreset('half')">Split</button>
+        <button class="preset-btn" onclick="applyPreset('blue')">All Blue</button>
+      </div>
+
+      <!-- Save/Cancel -->
+      <div class="config-actions">
+        <button class="save-btn" onclick="saveTags()">💾 Save & Close</button>
+        <button class="close-btn" onclick="closeConfig()">Cancel</button>
+      </div>
+    </div>
+  </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="module" src="/static/js/coaching_main.js"></script>
+</body>
+</html>

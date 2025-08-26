@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+   Coaching Panel
+  </title>
+  <style>
+   @font-face {
+      font-family: 'DIN';
+      src: local('DIN'), url('/static/fonts/din.ttf') format('truetype');
+    }
+    html, body {
+      margin: 0; padding: 0;
+      background-color: #000; color: #0f0;
+      font-family: 'DIN', Arial, sans-serif;
+      height: 100%;
+    }
+    .controls {
+      display: flex; gap: 15px; padding: 15px;
+    }
+    .controls button {
+      background: transparent; color: #0f0;
+      border: 1px solid #0f0; padding: 8px 16px;
+      font-size: 1rem; cursor: pointer;
+    }
+    .controls button:hover { box-shadow: 0 0 10px #0f0; }
+    .video-panel {
+      border: 1px solid #0f0; margin: 20px; height: 240px;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .tags { display: flex; flex-wrap: wrap; gap: 10px; padding: 0 20px 20px; }
+    .tag-btn {
+      background: transparent; border: 1px solid #0f0; color: #0f0;
+      padding: 10px 14px; cursor: pointer; box-sizing: border-box;
+    }
+    .tag-btn:hover { background:#0f0; color:#000; }
+    .fighter-toggle { margin: 10px 20px; }
+
+    footer {
+      position: fixed; bottom: 0; left: 0; width: 100%;
+      background-color: #000; display: flex; justify-content: space-between;
+      align-items: center; padding: 10px 40px; box-sizing: border-box; z-index: 1000;
+    }
+    .footer-button {
+      background: none; border: none; color: #fff; font-family: inherit;
+      font-size: 1rem; display: flex; align-items: center;
+      cursor: pointer; transition: box-shadow 0.3s;
+    }
+    .footer-button:hover {
+      box-shadow: 0 0 12px rgba(0, 255, 102, 0.7);
+    }
+    .footer-button .icon { margin-right: 8px; }
+  </style>
+ </head>
+ <body>
+  <div class="controls">
+   <button id="startBtn" onclick="toggleTimer()">
+    Start
+   </button>
+   <button onclick="timerCmd('end')">
+    End
+   </button>
+   <button onclick="triggerReplay()">
+    Replay
+   </button>
+   <button onclick="triggerSloMo()">
+    Slo-Mo
+   </button>
+   <button onclick="toggleFullscreen()">
+    Fullscreen
+   </button>
+   <button onclick="toggleDrawTool()">
+    Draw
+   </button>
+   <button onclick="clearDrawing()">
+    Clear
+   </button>
+  </div>
+  <div class="video-panel" id="video-panel">
+   VIDEO PANEL
+  </div>
+  <div class="fighter-toggle">
+   Current Fighter:
+   <span id="fighter-label">
+    Red
+   </span>
+   <button onclick="toggleFighter()">
+    Toggle (F)
+   </button>
+  </div>
+  <div class="tags" id="tags">
+  </div>
+  <footer>
+   <button class="footer-button" onclick="window.location.href='/index'">
+    <span class="icon">
+     ⟲
+    </span>
+    RETURN TO MENU
+   </button>
+  </footer>
+  <script>
+   let fighter = 'red';
+const keyMap = ['Q','W','E','R','T','A','S','F','G','H'];
+function toggleFighter(){
+  fighter = fighter === 'red' ? 'blue' : 'red';
+  document.getElementById('fighter-label').textContent = fighter.charAt(0).toUpperCase()+fighter.slice(1);
+}
+
+function toggleDrawTool(){
+  fetch('/api/toggle-draw', {method:'POST'});
+}
+function triggerReplay(){
+  fetch('/api/replay', {method:'POST'});
+}
+function triggerSloMo(){
+  fetch('/api/slo-mo', {method:'POST'});
+}
+function toggleFullscreen(){
+  fetch('/api/fullscreen', {method:'POST'});
+}
+function clearDrawing(){
+  fetch('/api/clear-drawing', {method:'POST'});
+}
+async function loadTags(){
+  const res = await fetch('/api/tags');
+  const tags = await res.json();
+  const container = document.getElementById('tags');
+  tags.forEach((tag,i)=>{
+    const btn=document.createElement('button');
+    btn.textContent=tag;
+    btn.className='tag-btn';
+    btn.onclick=()=>logTag(tag);
+    if(i<10){
+      document.addEventListener('keydown', e => {
+        if(e.key.toUpperCase() === keyMap[i]){logTag(tag);}
+      });
+    }
+    container.appendChild(btn);
+  });
+  document.addEventListener('keydown',e=>{if(e.key==='f'||e.key==='F'){toggleFighter();}});
+  document.addEventListener('keydown',e=>{if(e.key==='d'||e.key==='D'){toggleDrawTool();}});
+}
+async function logTag(tag){
+  try {
+    await fetch('/api/log-tag', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({tag:tag,fighter:fighter})
+    });
+    const res = await fetch('/api/trigger-tag', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({tag:tag,fighter:fighter})
+    });
+    if(!res.ok){
+      const errText = await res.text();
+      alert('Error triggering tag: '+errText);
+    }
+  } catch (err) {
+    console.error('Error logging tag:', err);
+    alert('Error logging tag');
+  }
+}
+function timerCmd(cmd){
+  fetch('/api/timer/'+cmd, {method:'POST'});
+}
+
+let timerState = 'stopped';
+function toggleTimer(){
+  const btn = document.getElementById('startBtn');
+  if(timerState === 'stopped'){
+    timerCmd('start');
+    timerState = 'running';
+    btn.textContent = 'Pause';
+  } else if(timerState === 'running'){
+    timerCmd('pause');
+    timerState = 'paused';
+    btn.textContent = 'Play';
+  } else if(timerState === 'paused'){
+    timerCmd('resume');
+    timerState = 'running';
+    btn.textContent = 'Pause';
+  }
+}
+window.onload=loadTags;
+  </script>
+ </body>
+</html>

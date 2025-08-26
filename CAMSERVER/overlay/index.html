@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fight Overlay</title>
+  <link href="/overlay/style.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="overlay-top">
+      <div class="fighter red">
+    <div class="name-bar red-name" id="redName">Loading...</div>
+    <div class="bpm-readout" id="redBPM">-- bpm <span class="status-badge" id="redStatus"></span></div>
+    <div class="stamina-wrapper" title="Effort %">
+     <div class="stamina-bar red-bar" id="red-bar"></div>
+     <div class="effort-text" id="red-effort">--%</div>
+    </div>
+    <div class="hr-zone-text" id="red-zone">-- Zone</div>
+   </div>
+   <div class="round-box">
+    <div class="round" id="roundDisplay">Round --</div>
+    <div id="roundRings"></div>
+    <div class="timer" id="timerContainer">
+     <div id="round-timer">--:--</div>
+     <div id="liveBadge" class="live-badge">LIVE</div>
+    </div>
+   </div>
+   <div class="fighter blue">
+    <div class="name-bar blue-name" id="blueName">Loading...</div>
+    <div class="bpm-readout" id="blueBPM">-- bpm <span class="status-badge" id="blueStatus"></span></div>
+    <div class="stamina-wrapper" title="Effort %">
+     <div class="stamina-bar blue-bar" id="blue-bar"></div>
+     <div class="effort-text" id="blue-effort">--%</div>
+    </div>
+    <div class="hr-zone-text" id="blue-zone">-- Zone</div>
+   </div>
+  </div>
+
+  <canvas id="redChart" width="400" height="120" class="hr-chart red-chart"></canvas>
+  <canvas id="blueChart" width="400" height="120" class="hr-chart blue-chart"></canvas>
+
+  <script src="/overlay/script.js"></script>
+ </body>
+</html>

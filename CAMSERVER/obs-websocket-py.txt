@@ -1,0 +1,16 @@
+from obsws_python import obsws, requests
+
+ws = obsws(host='localhost', port=4455, password='muaythai86')
+ws.connect()
+
+try:
+    ws.call(requests.StartRecord())
+    print("Recording started")
+
+    input("Press Enter to stop...")
+
+    ws.call(requests.StopRecord())
+    print("Recording stopped")
+finally:
+    ws.disconnect()
+    print("Disconnected from OBS")

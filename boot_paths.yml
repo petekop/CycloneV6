@@ -1,0 +1,6 @@
+mediamtx:
+  script: "scripts/start_mediamtx.bat"
+obs:
+  script: "scripts/start_obs.bat"
+hr_daemon:
+  script: "scripts/start_hr_daemons.bat"

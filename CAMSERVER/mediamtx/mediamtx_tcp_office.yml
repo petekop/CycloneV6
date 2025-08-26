@@ -1,0 +1,23 @@
+# ✅ MediaMTX 1.13.0 — Clean RTSP (TCP-only) Configuration
+# Last updated: 2025-07-08
+
+logLevel: info
+logDestinations: [stdout]
+
+rtsp: yes
+rtspTransports: [tcp]
+rtspAddress: :8554
+
+rtmp: no
+hls: no
+webrtc: no
+srt: no
+
+paths:
+  main_cam:
+    source: rtsp://petekop:kopcam@192.168.1.112:554/stream1
+    rtspTransport: tcp
+
+  left_cam:
+    source: rtsp://petekop:kopcam@192.168.1.113:554/stream1
+    rtspTransport: tcp

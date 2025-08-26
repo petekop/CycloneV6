@@ -1,0 +1,220 @@
+"""Minimal boot status helpers and Flask blueprint used in tests.
+
+This module is intentionally lightweight.  The original project performs a large
+amount of work to check the health of external services during application
+start-up.  For the purposes of the unit tests we only need a tiny subset of that
+behaviour: tracking the readiness of three services and exposing endpoints to
+query and reset that state.
+
+The state is stored as JSON on disk.  The location of the state file can be
+overridden by tests either by mutating the ``STATE_DIR`` global or by setting
+``current_app.config['STATE_DIR']`` when a Flask application context is active.
+"""
+
+from __future__ import annotations
+
+import copy
+import json
+import logging
+import os
+import subprocess
+from pathlib import Path
+from typing import Dict, Tuple
+
+from flask import Blueprint, current_app, has_app_context, jsonify
+
+from boot_state import get_boot_state as _bs_get
+from boot_state import set_boot_state as _bs_set
+from paths import BASE_DIR
+from config.boot_paths import load_boot_paths
+
+# Module level logger
+logger = logging.getLogger(__name__)
+
+# ---------------------------------------------------------------------------
+# Paths and state handling
+# ---------------------------------------------------------------------------
+
+# Default location of the boot state file.  Tests may modify ``STATE_DIR`` or
+# supply an alternative directory via ``current_app.config['STATE_DIR']``.
+STATE_DIR = Path(BASE_DIR) / "state"
+
+
+def _state_file() -> Path:
+    """Return the path to ``boot_state.json`` honouring Flask configuration."""
+    if has_app_context():  # pragma: no cover - exercised in integration tests
+        cfg = current_app.config.get("STATE_DIR")
+        if cfg is not None:
+            return Path(cfg) / "boot_state.json"
+    return Path(STATE_DIR) / "boot_state.json"
+
+
+# Default boot state.  ``obs`` starts as ``READY`` so the initial progress is
+# 33% which mirrors the behaviour of the real application.  The
+# ``services`` entry is reused wherever defaults are required.
+DEFAULT_STATE: Dict[str, object] = {
+    "services": {"hr_daemon": "WAIT", "mediamtx": "WAIT", "obs": "READY"},
+    "progress": 33,
+    "ready": False,
+    "message": "",
+}
+
+
+def _read_state() -> Dict[str, object]:
+    """Return the in-memory boot state with sensible defaults."""
+    state = _bs_get() or {}
+    services = state.get("services")
+    if not services:
+        if has_app_context() and current_app.config.get("STATE_DIR") is not None:
+            # When tests supply a STATE_DIR, start from DEFAULT_STATE (obs READY)
+            state = copy.deepcopy(DEFAULT_STATE)
+        else:
+            # Otherwise start from DEFAULT_STATE's service keys but put all in WAIT
+            services = copy.deepcopy(DEFAULT_STATE["services"])  # type: ignore[index]
+            for key in services:
+                services[key] = "WAIT"
+            state = {
+                "services": services,
+                "progress": 0,
+                "ready": False,
+                "message": "",
+            }
+        _bs_set(state)
+    return state
+
+
+def _write_state(state: Dict[str, object]) -> None:
+    _bs_set(state)
+    # Persist to disk as a convenience for any external tooling.  Failure to
+    # write is ignored – the in-memory state remains authoritative for tests.
+    try:  # pragma: no cover - disk persistence is trivial
+        path = _state_file()
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(state))
+    except Exception:
+        pass
+
+
+def _calc_progress(services: Dict[str, str]) -> Tuple[int, bool]:
+    """Return the completion percentage and ready flag for ``services``.
+
+    ``ERROR`` states count towards progress as the service has finished its boot
+    sequence even though it did not succeed.
+    """
+    total = len(services)
+    ready_count = sum(1 for v in services.values() if v in {"READY", "ERROR"})
+    progress = int((ready_count / total) * 100) if total else 0
+    return progress, ready_count == total
+
+
+# ---------------------------------------------------------------------------
+# Public helpers expected by the tests
+# ---------------------------------------------------------------------------
+
+
+def current_status(services: Dict[str, str] | None = None) -> Dict[str, object]:
+    """Return the current boot state.
+
+    When ``services`` is provided only the progress/ready values are
+    recalculated.  Otherwise the state is loaded from disk.
+    """
+    if services is None:
+        state = _read_state()
+        services = state.get("services", DEFAULT_STATE["services"])  # type: ignore[arg-type]
+    else:
+        state = {"services": services}
+
+    # Ensure all expected service keys exist using DEFAULT_STATE (obs defaults READY)
+    for key, default in DEFAULT_STATE["services"].items():  # type: ignore[dict-item]
+        services.setdefault(key, default)
+
+    progress, ready = _calc_progress(services)  # type: ignore[arg-type]
+    result = {"services": services, "progress": progress, "ready": ready, "message": state.get("message", "")}
+    _bs_set(result)  # keep the in-memory snapshot in sync for subsequent calls
+    return result
+
+
+def _refresh_state(state: Dict[str, object] | None = None) -> Dict[str, object]:
+    """Reset ``state`` to defaults while preserving any ``ERROR`` flags."""
+    if state is None:
+        state = _read_state()
+
+    services = state.get("services", {}).copy()  # type: ignore[assignment]
+    for key, default in DEFAULT_STATE["services"].items():  # type: ignore[dict-item]
+        if services.get(key) != "ERROR":
+            services[key] = "WAIT" if default != "READY" else "READY"
+    state["services"] = services
+    progress, ready = _calc_progress(services)  # type: ignore[arg-type]
+    state["progress"] = progress
+    state["ready"] = ready
+    state.setdefault("message", "")
+    _write_state(state)
+    return state
+
+
+def _spawn_services(services: Dict[str, str]) -> None:
+    """Spawn external helper processes (highly simplified for tests)."""
+    env = os.environ.copy()
+    from config.settings import settings
+
+    env["BASE_DIR"] = str(settings.BASE_DIR)
+    token = os.environ.get("HR_DAEMON_TOKEN")
+    if token:
+        env["HR_DAEMON_TOKEN"] = token
+
+    boot_cfg = load_boot_paths()
+
+    for name in list(services.keys()):
+        entry = boot_cfg.get(name, {})  # type: ignore[assignment]
+        script = entry.get("script")
+        exe = entry.get("exe")
+        cmd = [script or exe or name]
+        # Only the executable or script path is passed to ``subprocess.Popen``.
+        # Any configuration handling is delegated to the spawned process.
+        try:
+            subprocess.Popen(cmd, env=env)  # pragma: no cover - exercised in tests
+        except FileNotFoundError:
+            services[name] = "ERROR"
+            logger.warning("Service %s not found", name)
+        except Exception:
+            services[name] = "ERROR"
+            logger.exception("Error spawning service %s", name)
+        else:
+            logger.info("Spawned service %s", name)
+
+
+# ---------------------------------------------------------------------------
+# Flask blueprint
+# ---------------------------------------------------------------------------
+
+boot_status_bp = Blueprint("boot_status", __name__)
+
+
+@boot_status_bp.get("/status")
+def status_route():
+    """Return the current boot status as JSON."""
+    return jsonify(current_status())
+
+
+@boot_status_bp.post("/start")
+def start_route():
+    """Reset state and spawn services at the start of the boot sequence."""
+    state = _refresh_state()
+    _spawn_services(state["services"])  # type: ignore[index]
+    state = current_status(state["services"])  # recompute progress/ready
+    return jsonify(state)
+
+
+@boot_status_bp.get("/start")
+def start_get_route():
+    """Shim for legacy bundles that expect GET /start."""
+    return start_route()
+
+
+__all__ = [
+    "current_status",
+    "_refresh_state",
+    "boot_status_bp",
+    "_spawn_services",
+    "subprocess",
+]

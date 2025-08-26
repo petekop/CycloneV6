@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Create Cyclone</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/static/css/create_cyclone.css">
+  <!-- Chart.js via CDN (fixes local 404) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body class="neo-bg">
+
+  <div class="topbar">
+    <a class="btn back" href="/create-edit-cyclone">← Back</a>
+    <h1>Create Cyclone</h1>
+  </div>
+
+  <div class="grid">
+    <!-- LEFT: FORM + TABS -->
+    <div class="panel">
+
+      <div class="tabs" role="tablist" aria-label="Create Cyclone Tabs">
+        <button class="tab on" data-tab="info" aria-selected="true">INFO</button>
+        <button class="tab" data-tab="metrics">METRICS</button>
+        <button class="tab" data-tab="docs">DOCS</button>
+        <button class="tab" data-tab="performance">PERFORMANCE</button>
+        <button class="tab" data-tab="charts">CHARTS</button>
+      </div>
+
+      <!-- INFO -->
+      <section id="tab-info" class="tabpane on" aria-labelledby="info">
+        <div class="field">
+          <label>Upload Photo</label>
+          <input id="photo" type="file" accept="image/png,image/jpeg" />
+          <div class="chk">
+            <input id="removeBg" type="checkbox">
+            <label for="removeBg">Remove background (better with solid background)</label>
+          </div>
+          <div class="hint">PNG/JPG up to ~5MB</div>
+        </div>
+
+        <div class="field">
+          <label for="name">Name</label>
+          <input id="name" type="text" placeholder="Name" />
+        </div>
+
+        <div class="field">
+          <label for="country">Country</label>
+          <select id="country">
+            <option value="">Select Country</option>
+            {% if flags %}
+              {% for f in flags %}
+                <option value="{{ f.code }}">{{ f.name }}</option>
+              {% endfor %}
+            {% endif %}
+          </select>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="dob">Date of Birth</label>
+            <input id="dob" type="text" placeholder="DD/MM/YYYY" />
+          </div>
+          <div class="field">
+            <label for="weight">Weight (kg)</label>
+            <input id="weight" type="number" step="0.1" placeholder="e.g. 70.0" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="stance">Stance</label>
+            <select id="stance">
+              <option>Orthodox</option>
+              <option>Southpaw</option>
+              <option>Switch</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="hrmax">HR Max (auto)</label>
+            <input id="hrmax" type="number" readonly />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="weightClass">Weight Class (auto)</label>
+            <input id="weightClass" type="text" readonly />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <div class="chk">
+              <input id="sexM" name="sex" type="radio" value="M" checked />
+              <label for="sexM">Male</label>
+            </div>
+          </div>
+          <div class="field">
+            <div class="chk">
+              <input id="sexF" name="sex" type="radio" value="F" />
+              <label for="sexF">Female</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="right">
+          <button class="btn next" data-next="metrics">NEXT</button>
+        </div>
+      </section>
+
+      <!-- METRICS -->
+      <section id="tab-metrics" class="tabpane">
+        <div class="row">
+          <div class="field">
+            <label for="height">Height (cm)</label>
+            <input id="height" type="number" />
+          </div>
+          <div class="field">
+            <label for="armspan">Arm Span (cm)</label>
+            <input id="armspan" type="number" placeholder="Fingertip-to-fingertip" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="reach">Reach (cm)</label>
+            <input id="reach" type="number" />
+            <div class="hint">If left blank, reach ≈ arm span; if that’s blank, we estimate from height.</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="neck">Neck (cm)</label>
+            <input id="neck" type="number" />
+          </div>
+          <div class="field">
+            <label for="waist">Waist (cm)</label>
+            <input id="waist" type="number" />
+          </div>
+        </div>
+
+        <div class="row" id="hipRow">
+          <div class="field">
+            <label for="hip">Hip (cm)</label>
+            <input id="hip" type="number" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field" style="grid-column:1 / -1">
+            <label for="bodyFatAuto">% Body Fat</label>
+            <input id="bodyFatAuto" type="number" step="0.1" readonly />
+            <input id="bodyFatFinal" name="bodyFat" type="hidden" />
+            <div class="chk" style="margin-top:6px">
+              <input id="haveBodyFat" type="checkbox">
+              <label for="haveBodyFat">Manual value</label>
+            </div>
+            <input id="bodyFat" type="number" min="0" max="80" placeholder="% Body Fat" style="margin-top:6px;display:none" />
+          </div>
+        </div>
+
+        <div class="right">
+          <button class="btn next" data-next="docs">NEXT</button>
+        </div>
+      </section>
+
+      <!-- DOCS -->
+      <section id="tab-docs" class="tabpane">
+        <div class="field">
+          <label>NDA / Consent</label>
+          <iframe
+            class="embed-frame"
+            src="https://docs.google.com/forms/d/e/1FAIpQLSerE3FpWe5jxK5W4AV__P037XL0wVaDV0ZWAEo0OyJsOhTMhA/viewform?embedded=true"
+            title="NDA / Consent Form"
+            loading="lazy"
+            allow="clipboard-write; fullscreen">
+          </iframe>
+        </div>
+
+        <div class="field">
+          <label for="insurance">Upload Insurance (PDF/JPG/PNG)</label>
+          <input id="insurance" type="file" accept=".pdf,image/*" />
+        </div>
+
+        <div class="right">
+          <button class="btn next" data-next="performance">NEXT</button>
+        </div>
+      </section>
+
+      <!-- PERFORMANCE -->
+      <section id="tab-performance" class="tabpane">
+        <div class="row">
+          <div class="field">
+            <label for="power">Power (0–100)</label>
+            <input id="power" type="number" value="50" />
+          </div>
+          <div class="field">
+            <label for="endurance">Endurance (0–100)</label>
+            <input id="endurance" type="number" value="55" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="perfUpload">Performance upload (CSV/JSON for group tests)</label>
+          <input id="perfUpload" type="file" accept=".csv,.json" />
+          <div class="hint">We’ll match by fighter name and pull APR (aerobic/anaerobic power), zones, etc.</div>
+        </div>
+
+        <div id="perfStats" class="perf-grid" style="display:none;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0;">
+          <div class="info-pill"><span class="lbl">APR</span><span id="statApr" class="val">--</span></div>
+          <div class="info-pill"><span class="lbl">APR CLASS</span><span id="statAprClass" class="val">--</span></div>
+          <div class="info-pill"><span class="lbl">5K TIME</span><span id="stat5kTime" class="val">--</span></div>
+          <div class="info-pill"><span class="lbl">42K TIME</span><span id="stat42kTime" class="val">--</span></div>
+          <div class="info-pill"><span class="lbl">VO₂ MAX</span><span id="statVo2Max" class="val">--</span></div>
+          <div class="info-pill"><span class="lbl">vVO₂ MAX</span><span id="statVvo2Max" class="val">--</span></div>
+          <div class="info-pill"><span class="lbl">VT1 HR</span><span id="statVt1Hr" class="val">--</span></div>
+          <div class="info-pill"><span class="lbl">VT2 HR</span><span id="statVt2Hr" class="val">--</span></div>
+        </div>
+
+        <div class="right">
+          <button id="createBtn" class="btn primary">CREATE CYCLONE</button>
+        </div>
+      </section>
+
+      <!-- CHARTS -->
+      <section id="tab-charts" class="tabpane">
+        <div class="charts-wrap">
+          <div class="chart-card">
+            <div class="chart-title">ANAEROBIC POWER RESERVE</div>
+            <canvas id="aprChart" height="240"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">PERFORMANCE SPIDER</div>
+            <canvas id="radarChart" height="320"></canvas>
+          </div>
+        </div>
+        <div class="hint" style="margin-top:8px">Charts update when Heavy-Hitters data is loaded or a new test is added.</div>
+        <div class="right" style="margin-top:12px">
+          <a id="viewBtn" class="btn" href="#" style="display:none">VIEW FIGHTER</a>
+        </div>
+      </section>
+    </div>
+
+    <!-- RIGHT: CARD PREVIEW -->
+    <div class="preview">
+      <div class="card-frame">
+        <img id="cardBg" class="card-bg" alt="card"
+             src="/static/images/cyclone_card_front_logo.png"
+             data-front="/static/images/cyclone_card_front_logo.png"
+             data-back="/static/images/cyclone_card_back.png" />
+        <div id="cardOverlay" class="overlay">
+          <img id="olPhoto" class="ol-photo" alt="" />
+          <div id="olName" class="ol-name">—</div>
+          <img id="olFlag" class="ol-flag" alt="" />
+
+          <div class="ol-brief">
+            <div class="info-pill">
+              <span class="lbl">AGE</span><span id="briefAge" class="val">--</span>
+            </div>
+            <div class="info-pill">
+              <span class="lbl">HEIGHT</span><span id="briefHt" class="val">--</span>
+            </div>
+            <div class="info-pill">
+              <span class="lbl">CLASS</span><span id="briefClass" class="val">--</span>
+            </div>
+          </div>
+          <div id="cardKeyStats">
+            <span id="card_aer">--</span>
+            <span id="card_ana">--</span>
+            <span id="card_peak">--</span>
+            <span id="card_vo2">--</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /grid -->
+
+  <script src="/static/js/create.js"></script>
+</body>
+</html>

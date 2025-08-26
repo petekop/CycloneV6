@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fight Entry - Cyclone</title>
+  <style>
+    :root {
+      --accent: #ffea00;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #000;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: #000;
+      padding: 30px;
+      border: 2px solid var(--accent);
+      border-radius: 10px;
+      width: 90%;
+      max-width: 900px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+    h2 {
+      text-align: center;
+      color: var(--accent);
+      grid-column: 1 / -1;
+    }
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-size: 1rem;
+    }
+    select {
+      width: 100%;
+      padding: 12px;
+      background: #222;
+      color: #fff;
+      border: 2px solid #444;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      background: #222;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 2px solid var(--accent);
+      background: var(--accent);
+      color: #000;
+    }
+    .cancel-btn {
+      background: #111;
+      color: #fff;
+    }
+    .popup {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #222;
+      padding: 10px 20px;
+      border: 1px solid #0f0;
+      border-radius: 4px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>FIGHT ENTRY</h2>
+    <form id="fighterForm">
+      <label for="redName">🔴 Red Fighter</label>
+      <select id="redName" name="redName" required>
+        <option value="">-- Select Fighter --</option>
+      </select>
+
+      <label for="blueName">🔵 Blue Fighter</label>
+      <select id="blueName" name="blueName" required>
+        <option value="">-- Select Fighter --</option>
+      </select>
+
+      <label for="roundType">⏱️ Round Format</label>
+      <select name="roundType" id="roundType" required>
+        <option value="3x0.25">3 x 0.25 min (debug)</option>
+        <option value="3x1">3 x 1 min</option>
+        <option value="3x2">3 x 2 min</option>
+        <option value="3x3">3 x 3 min</option>
+        <option value="5x1">5 x 1 min</option>
+        <option value="5x2">5 x 2 min</option>
+        <option value="5x3">5 x 3 min</option>
+      </select>
+
+      <label for="roundDuration">Round Duration (s)</label>
+      <input id="roundDuration" name="roundDuration" type="number" required>
+
+      <label for="restDuration">Rest Duration (s)</label>
+      <input id="restDuration" name="restDuration" type="number" required>
+
+      <button type="submit" class="confirm-btn">✅ Confirm</button>
+      <button type="button" class="cancel-btn">Cancel</button>
+    </form>
+  </div>
+  <div id="popup" class="popup">Fight Loaded</div>
+
+  <script>
+    // Populate fighter dropdowns
+    fetch('/api/fighters')
+      .then(response => response.json())
+      .then(data => {
+        const redSelect = document.getElementById('redName');
+        const blueSelect = document.getElementById('blueName');
+
+        data.forEach(fighter => {
+          const redOption = document.createElement('option');
+          redOption.value = fighter.name;
+          redOption.textContent = fighter.name;
+          redSelect.appendChild(redOption);
+
+          const blueOption = document.createElement('option');
+          blueOption.value = fighter.name;
+          blueOption.textContent = fighter.name;
+          blueSelect.appendChild(blueOption);
+        });
+      })
+      .catch(error => {
+        console.error('Error loading fighters:', error);
+      });
+
+    // Handle form submission
+    const form = document.getElementById('fighterForm');
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      fetch('/enter-fighters', {
+        method: 'POST',
+        body: new FormData(form)
+      })
+      .then(res => {
+        if (!res.ok) throw new Error('Network response was not ok');
+        return res.text();
+      })
+      .then(() => {
+        const popup = document.getElementById('popup');
+        popup.textContent = 'Fight Loaded';
+        popup.style.display = 'block';
+        setTimeout(() => { popup.style.display = 'none'; }, 2000);
+      })
+      .catch(err => console.error('Submission failed:', err));
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,186 @@
+/* Styles specific to select fighter page */
+.action-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  z-index: 2;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+@keyframes neonPulse {
+  0%, 100% { box-shadow: 0 0 8px #0ff, 0 0 16px #0ff; }
+  50%      { box-shadow: 0 0 12px #0ff, 0 0 24px #0ff; }
+}
+
+body { margin: 0; }
+
+#carousel-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  background: url('/static/images/kop_cyclone_wall.png') center/cover no-repeat;
+  position: relative;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 600;
+  color: #fff;
+}
+
+#carousel-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+#carousel-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+main#fighterSelector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  width: 100%;
+  min-height: calc(100% - 5vh);
+  padding-bottom: 5vh;
+  box-sizing: border-box;
+}
+
+h1 { font-size: 3rem; }
+h1 .select  { color: #0ff; text-shadow: 0 0 10px #0ff; }
+h1 .fighter { color: #ff0; text-shadow: 0 0 10px #ff0; }
+
+.filter-tabs { display: flex; align-items: center; gap: 20px; }
+.filter-tab {
+  background: transparent;
+  color: #0ff;
+  border: 2px solid #0ff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-shadow: 0 0 5px #0ff;
+  box-shadow: 0 0 10px #0ff, inset 0 0 10px #0ff;
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+.filter-tab:hover,
+.filter-tab:focus { box-shadow: 0 0 20px #0ff, inset 0 0 20px #0ff; transform: scale(1.05); }
+.filter-tab:focus  { outline: 2px solid #fff; }
+.filter-tab.active { background: #ff0; color: #000; }
+
+#division-filter {
+  background: rgba(0, 0, 0, 0.6);
+  color: #ff0;
+  border: 2px solid #ff0;
+  border-radius: 8px;
+  padding: 10px 20px;
+  text-shadow: 0 0 5px #ff0;
+  box-shadow: 0 0 10px #ff0, inset 0 0 10px #ff0;
+  cursor: pointer;
+  transition: box-shadow 0.3s, transform 0.3s;
+  font-family: inherit;
+  font-weight: 600;
+}
+#division-filter:hover,
+#division-filter:focus { box-shadow: 0 0 20px #ff0, inset 0 0 20px #ff0; transform: scale(1.05); outline: none; }
+
+#cardWrapper { display: flex; align-items: center; gap: 20px; }
+
+.nav-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 3rem;
+  cursor: pointer;
+  text-shadow: 0 0 10px #fff;
+}
+.nav-btn:focus { outline: none; }
+
+/* Fighter card */
+.fighter-card {
+  width: 300px;
+  height: 400px;
+  perspective: 1000px;
+  cursor: pointer;
+}
+.fighter-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+.fighter-card.flipped .fighter-card-inner { transform: rotateY(180deg); }
+
+.fighter-card-front,
+.fighter-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  animation: none;
+  color: #fff;
+}
+
+.fighter-card:hover .fighter-card-front,
+.fighter-card:hover .fighter-card-back {
+  animation: neonPulse 2s ease-in-out infinite;
+}
+
+.fighter-card-back { transform: rotateY(180deg); }
+.fighter-card-back canvas { max-width: 100%; }
+
+.fighter-card .flag  { width: 64px; height: 40px; object-fit: cover; align-self: center; }
+.fighter-card img.style { width: 40px; height: 40px; align-self: center; }
+
+#filters {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.neon-button {
+  background: transparent;
+  color: #ff0;
+  border: 2px solid #ff0;
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  text-shadow: 0 0 5px #ff0;
+  box-shadow: 0 0 10px #ff0, inset 0 0 10px #ff0;
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+.neon-button:hover,
+.neon-button:focus { box-shadow: 0 0 20px #ff0, inset 0 0 20px #ff0; transform: scale(1.05); }
+.neon-button:focus { outline: 2px solid #fff; }

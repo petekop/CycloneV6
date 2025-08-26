@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Boot Troubleshooting</title>
+</head>
+<body>
+    <h1>Boot Troubleshooting</h1>
+
+    <p>
+        The boot sequence is controlled by the <code>hr_daemon</code> service. If
+        the system fails to boot or you encounter hardware sensor warnings,
+        focus on diagnosing <code>hr_daemon</code> instead of individual red or blue
+        modules.
+    </p>
+
+    <h2>Check <code>hr_daemon</code> Status</h2>
+    <ul>
+        <li><code>sudo systemctl status hr_daemon</code> &ndash; view the current status.</li>
+        <li><code>sudo systemctl restart hr_daemon</code> &ndash; restart the service.</li>
+        <li><code>sudo journalctl -u hr_daemon -f</code> &ndash; follow runtime logs for debugging.</li>
+    </ul>
+
+    <h2>Sensor Error Investigation</h2>
+    <p>
+        When <code>hr_daemon</code> reports sensor errors, inspect each strap
+        connection individually:
+    </p>
+    <ul>
+        <li>Verify that each strap is connected securely to the hardware.</li>
+        <li>Look for signs of wear, damage, or loose connectors.</li>
+        <li>Swap suspect straps with known-good ones to isolate faulty hardware.</li>
+    </ul>
+
+    <p>
+        After addressing any strap issues, restart <code>hr_daemon</code> and
+        re-check logs to confirm the problem is resolved.
+    </p>
+</body>
+</html>

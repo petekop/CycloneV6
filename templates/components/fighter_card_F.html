@@ -1,0 +1,11 @@
+<div class="fighter-card fighter-card-front">
+  <img src="{{ url_for('static', filename='images/cyclone_card_front_logo.png') }}" class="card-bg" alt="Cyclone card front"/>
+  <div class="card-content">
+    <img src="{{ url_for('static', filename='images/kop_cyclone.ico') }}" class="badge" alt="Cyclone badge"/>
+    <h3 class="fighter-name">{{ fighter.name }}</h3>
+    <div class="card-metrics">
+      <div>Power: {{ fighter.power if fighter.power is not none else 'N/A' }}</div>
+      <div>Endurance: {{ fighter.endurance if fighter.endurance is not none else 'N/A' }}</div>
+    </div>
+  </div>
+</div>

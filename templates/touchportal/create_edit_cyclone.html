@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>KOP CYCLONE — Fighter Menu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    body {
+      background: url('/static/images/kop_cyclone_wall.png') center center / cover no-repeat fixed;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .centered-layout {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      height: 100vh;
+      width: 100%;
+    }
+
+    .logo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 60px;
+    }
+
+    .logo-container img:first-child {
+      filter: drop-shadow(0 0 20px #0ff);
+    }
+
+    .logo-container img:last-child {
+      filter: drop-shadow(0 0 20px #ff0);
+    }
+
+    .menu-button {
+      width: 360px;
+      padding: 25px;
+      margin: 15px 0;
+      text-align: center;
+      font-size: 1.5em;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 12px;
+      border: 3px solid transparent;
+      transition: all 0.3s ease;
+      user-select: none;
+    }
+
+    .menu-button.create {
+      color: #0ff;
+      border-color: #0ff;
+      box-shadow: 0 0 15px #0ff;
+    }
+
+    .menu-button.create:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px #0ff;
+    }
+
+    .menu-button.load {
+      color: #ff0;
+      border-color: #ff0;
+      box-shadow: 0 0 15px #ff0;
+    }
+
+    .menu-button.load:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px #ff0;
+    }
+
+    .menu-button.back {
+      color: #fff;
+      border-color: #fff;
+      box-shadow: 0 0 15px #fff;
+    }
+
+    .menu-button.back:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="centered-layout">
+    <div class="logo-container">
+      <img src="/static/images/kop_text.png" alt="KOP Logo">
+      <img src="/static/images/cyclone_text.png" alt="Cyclone Logo">
+    </div>
+    <div class="menu-button create" onclick="delayedNav('/create')">CREATE FIGHTER</div>
+    <div class="menu-button load" onclick="delayedNav('/select-fighter')">LOAD FIGHTER</div>
+    <div class="menu-button back" onclick="delayedNav('/menu')">BACK</div>
+  </div>
+
+  <script>
+    function delayedNav(url) {
+      const active = event.target;
+      active.style.opacity = '0.7';
+      active.style.transform = 'scale(0.98)';
+      setTimeout(() => { window.location.href = url; }, 500);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+=== PATCH routes\boot_status.py (fix .bat/.ps1/.lnk launch; fix ERROR 193) ===
+
+1) Find function that *spawns* a service (often named `_spawn_services`).
+   Replace the `subprocess.Popen(...)` call with the wrapper below.
+
+   Add this helper near the top of the file:
+
+       import subprocess, os
+
+       def _wrap_command(script_path: str):
+           sp = script_path.strip('"')
+           ext = os.path.splitext(sp)[1].lower()
+           if ext in ('.bat', '.cmd'):
+               return ['cmd.exe', '/c', sp]
+           if ext == '.ps1':
+               return ['powershell', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', sp]
+           if ext == '.lnk':
+               return ['powershell', '-NoProfile', '-Command', f\"Start-Process -FilePath '{sp}'\"]
+           # default: executable
+           return [sp]
+
+2) When spawning, use:
+
+       cmd = _wrap_command(script_path_from_yaml)
+       proc = subprocess.Popen(cmd, cwd=BASE_DIR,
+                               creationflags=subprocess.CREATE_NEW_CONSOLE)
+
+   (You can keep any env=envv you already pass.)
+
+This avoids OSError WinError 193 ("%1 is not a valid Win32 application") when
+launching `.bat` files, and ensures `.lnk` shortcuts (OBS) start correctly.
+
+3) Update `config\boot_paths.yml` to point to the .bat wrappers shipped here:
+
+mediamtx:
+  script: "scripts/start_mediamtx.bat"
+obs:
+  script: "scripts/start_obs.bat"
+hr_daemon:
+  script: "scripts/start_hr_daemons.bat"
+
+4) Restart Cyclone server and retry:
+   PS> $env:CYCLONE_BASE_DIR="C:\Cyclone"
+   PS> .\venv\Scripts\python -u .\cyclone_server.py
+   In another terminal:
+   PS> Invoke-WebRequest http://127.0.0.1:5050/api/boot/start | % Content
+   PS> Invoke-WebRequest http://127.0.0.1:5050/api/boot/status | % Content

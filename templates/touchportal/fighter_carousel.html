@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+   Fighters
+  </title>
+  <link rel="stylesheet" href="/static/css/card_spin.css">
+  <style>
+   body {
+      margin: 0;
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+    #carousel {
+      display: flex;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding: 40px 10px;
+      box-sizing: border-box;
+      perspective: 800px;
+    }
+    .card {
+      flex: 0 0 220px;
+      background: #111;
+      margin: 0 15px;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      transition: transform 0.3s;
+      transform-style: preserve-3d;
+    }
+    .card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+    .edit-btn {
+      margin-top: 8px;
+      padding: 6px 12px;
+      border: none;
+      background: #00cc66;
+      color: #000;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .card:last-child { margin-right: 0; }
+    .card h3 { margin: 10px 0 5px; font-size: 1.1rem; color: #0f0; }
+
+  </style>
+ </head>
+ <body>
+  <div id="carousel">
+  </div>
+  <script src="/static/js/card_spin.js"></script>
+  <script>
+   const fighters = {{ fighters | tojson }};
+    const container = document.getElementById('carousel');
+    const cards = [];
+
+    fighters.forEach(f => {
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      const imgPath = f.photo_local ? "/static/" + f.photo_local.replace(/\\\\/g, '/') : "/static/../headshots/default_red.jpg";
+
+      card.innerHTML = `
+        <img src="${imgPath}" alt="${f.name}">
+        <h3>${f.name}</h3>
+        <p>Weight: ${f.weight || ''}</p>
+        <p>Style: ${f.stance || ''}</p>
+      `;
+
+      container.appendChild(card);
+      cards.push(card);
+    });
+
+    function updateTransforms() {
+      const rect = container.getBoundingClientRect();
+      const center = rect.left + rect.width / 2;
+      cards.forEach(card => {
+        const cRect = card.getBoundingClientRect();
+        const cCenter = cRect.left + cRect.width / 2;
+        const offset = (cCenter - center) / rect.width;
+        const angle = offset * 40;
+        const depth = -Math.abs(offset) * 150;
+        card.style.transform = `translateZ(${depth}px) rotateY(${angle}deg)`;
+      });
+    }
+
+    container.addEventListener('scroll', updateTransforms);
+    window.addEventListener('resize', updateTransforms);
+
+    let scroll = 0;
+    setInterval(() => {
+      scroll += 1;
+      container.scrollLeft = scroll;
+      if (scroll >= container.scrollWidth - container.clientWidth) {
+        scroll = 0;
+      }
+      updateTransforms();
+    }, 30);
+
+    updateTransforms();
+  </script>
+ </body>
+</html>

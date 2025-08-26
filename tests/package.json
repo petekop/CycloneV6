@@ -1,0 +1,11 @@
+{
+  "name": "cyclone-tests",
+  "private": true,
+  "description": "WebSocket client for tests. Set WS_URL or pass a URL argument (WS_URL takes precedence; default ws://localhost:4455).",
+  "scripts": {
+    "test": "node client.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.3"
+  }
+}

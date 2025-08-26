@@ -1,0 +1,27 @@
+{
+  "name": "cyclone",
+  "version": "1.0.0",
+  "description": "Split cyclone modules include:",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/petekop/CycloneV5.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/petekop/CycloneV5/issues"
+  },
+  "homepage": "https://github.com/petekop/CycloneV5#readme",
+  "dependencies": {
+    "ws": "^8.18.3"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RoundMeta",
+  "type": "object",
+  "description": "Metadata describing an ended round including heart-rate stats.",
+  "properties": {
+    "fight_id": {"type": "string", "description": "Identifier for the fight"},
+    "round_no": {"type": "integer", "minimum": 1},
+    "red_name": {"type": "string"},
+    "blue_name": {"type": "string"},
+    "start": {"type": "string", "description": "ISO formatted round start timestamp"},
+    "date": {"type": "string"},
+    "fight": {"type": "string"},
+    "round": {"type": ["integer", "string"]},
+    "dest_dir": {"type": "string"},
+    "hr_stats": {
+      "type": "object",
+      "description": "Heart-rate statistics captured by ZoneTracker for this round.",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

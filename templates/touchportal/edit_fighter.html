@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Fighter Card</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/create_cyclone.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/card_spin.css') }}">
+
+  <style>
+    /* NDA modal styles */
+    #ndaModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    #ndaModal iframe {
+      width: 80%;
+      height: 80%;
+      border: none;
+      background: #fff;
+      border-radius: 8px;
+    }
+
+    .error {
+      outline: 2px solid #ff4d4f;
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="wall-bg">
+  <span id="mode" class="hidden">edit</span>
+  <div class="container">
+    <!-- Left column: tabbed form -->
+    <div class="panel form-panel">
+      <form id="fighterForm" name="fighterForm" action="/api/fighters/{{ fighter.id }}">
+        <input type="hidden" name="id" value="{{ fighter.id }}">
+        <div class="tabs">
+          <button type="button" class="tab active" data-tab="info" onclick="showTab('info')">Info</button>
+          <button type="button" class="tab" data-tab="metrics" onclick="showTab('metrics')">Metrics</button>
+          <button type="button" class="tab" data-tab="docs" onclick="showTab('docs')">Docs</button>
+          <button type="button" class="tab" data-tab="performance" onclick="showTab('performance')">Performance</button>
+          <button type="button" class="tab" data-tab="history" onclick="showTab('history')">History</button>
+        </div>
+
+        <!-- Tab 1: Info -->
+        <div id="info" class="tab-content active">
+          <h2>FIGHTER INFO</h2>
+
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" required value="{{ fighter.name }}">
+
+<label for="country">Country</label>
+<select id="country" name="nation" required>
+  <option value="">Select Country</option>
+  {% for flag in flags %}
+  <option value="{{ flag.code }}" {% if fighter.nation == flag.code %}selected{% endif %}>{{ flag.name }}</option>
+  {% endfor %}
+</select>
+
+
+          <label for="age">Age</label>
+          <input id="age" name="age" type="number" min="0" max="120" step="1" required value="{{ fighter.age }}">
+
+          <label for="weight">Weight (kg)</label>
+          <input id="weight" name="weight" type="number" min="0" max="500" step="0.1" required value="{{ fighter.weight }}">
+
+          <label for="height">Height (cm)</label>
+          <input id="height" name="height" type="number" min="0" max="300" step="0.1" required value="{{ fighter.height or '' }}">
+
+          <label for="reach">Reach (cm)</label>
+          <input id="reach" name="reach" type="number" min="0" max="400" step="0.1" value="{{ fighter.reach or '' }}">
+
+          <label for="stance">Stance</label>
+          <input id="stance" name="stance" type="text" required value="{{ fighter.stance }}">
+
+          <label for="division">Division</label>
+          <input id="division" name="division" type="text" required value="{{ fighter.division }}">
+
+          <label for="hr_max">HR Max</label>
+          <input id="hr_max" name="hr_max" type="number" min="0" max="220" readonly required value="{{ fighter.hr_max }}">
+          <p id="hr_warning" style="color: red; display: none;">HR Max out of expected range</p>
+
+          <button type="button" class="next-btn">Next</button>
+        </div>
+
+        <!-- Tab 2: Metrics -->
+        <div id="metrics" class="tab-content">
+          <h2>MEASUREMENTS</h2>
+
+          <label for="gender">Gender</label>
+          <select id="gender" name="gender" required>
+            <option value="">Select</option>
+            <option value="male" {% if fighter.gender=='male' %}selected{% endif %}>Male</option>
+            <option value="female" {% if fighter.gender=='female' %}selected{% endif %}>Female</option>
+          </select>
+
+          <label for="neck">Neck (cm)</label>
+          <input id="neck" name="neck" type="number" step="0.1" value="{{ fighter.neck }}">
+
+          <label for="abdomen">Abdomen (cm)</label>
+          <input id="abdomen" name="abdomen" type="number" step="0.1" value="{{ fighter.abdomen }}">
+
+          <label for="waist">Waist (cm)</label>
+          <input id="waist" name="waist" type="number" step="0.1" value="{{ fighter.waist }}">
+
+          <label for="hip">Hip (cm)</label>
+          <input id="hip" name="hip" type="number" step="0.1" value="{{ fighter.hip }}">
+
+          <label for="body_fat">% Body Fat</label>
+          <input id="body_fat" name="body_fat" type="number" step="0.1" readonly value="{{ fighter.body_fat }}">
+
+          <button type="button" class="next-btn">Next</button>
+        </div>
+
+        <!-- Tab 3: Docs -->
+        <div id="docs" class="tab-content">
+          <h2>DOCUMENTS</h2>
+
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" required value="{{ fighter.email }}">
+
+          <button type="button" onclick="openNDAModal()">📄 View NDA Form</button>
+          <button type="button" class="next-btn">Next</button>
+        </div>
+
+        <!-- Tab 4: Performance -->
+        <div id="performance" class="tab-content">
+          <h2>PERFORMANCE TESTS</h2>
+
+          <label for="speed">Speed</label>
+          <input id="speed" name="speed" type="number" min="0" max="100" step="1" required value="{{ fighter.speed }}">
+
+          <label for="power">Power</label>
+          <input id="power" name="power" type="number" min="0" max="100" step="1" required value="{{ fighter.power }}">
+
+          <label for="endurance">Endurance</label>
+          <input id="endurance" name="endurance" type="number" min="0" max="100" step="1" required value="{{ fighter.endurance }}">
+
+          <details id="performanceDetails" class="performance-details">
+            <summary>Performance Details</summary>
+            <label for="performance_tests">Test Notes</label>
+            <textarea id="performance_tests" name="performance_tests" rows="5">{{ fighter.performance_tests }}</textarea>
+          </details>
+
+          <button type="submit" class="submit-btn">Update Card</button>
+        </div>
+
+        <!-- Tab 5: History -->
+        <div id="history" class="tab-content">
+          <h2>HISTORY</h2>
+          <canvas id="performanceHistoryChart"></canvas>
+        </div>
+      </form>
+    </div>
+
+    <!-- Middle column: radar chart -->
+    <div class="panel chart-panel">
+      <canvas id="fighterRadar"></canvas>
+    </div>
+
+  </div> <!-- End .container -->
+
+  <button type="button" class="back-button" onclick="window.history.back()">← Back</button>
+  <div class="card-container">
+    <div class="fighter-card">
+      <img src="{{ url_for('static', filename='images/cyclone_card_front_logo.png') }}" alt="Fighter Card">
+      <div class="card-overlay">
+        <div class="card-info">
+          <h3 id="cardName">Fighter</h3>
+          <div class="nation">
+            <img id="cardFlag" src="{{ url_for('static', filename='flags/default.svg') }}" alt="Flag">
+            <span id="cardCountry"></span>
+          </div>
+          <p id="cardWeight">Weight: -- kg</p>
+          <div class="ratings">
+            <p>Speed: <span id="cardSpeed">--</span></p>
+            <p>Power: <span id="cardPower">--</span></p>
+            <p>Endurance: <span id="cardEndurance">--</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="ndaModal" onclick="closeNDAModal()">
+    <iframe src="{{ url_for('static', filename='docs/nda_template.txt') }}" onclick="event.stopPropagation();"></iframe>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/static/js/card_spin.js"></script>
+  <script src="{{ url_for('static', filename='js/create.js') }}"></script>
+  <script>
+    function updateBodyFat() {
+      const gender = document.getElementById('gender').value;
+      const height = parseFloat(document.getElementById('height').value);
+      const neck = parseFloat(document.getElementById('neck').value);
+      const abdomen = parseFloat(document.getElementById('abdomen').value);
+      const waist = parseFloat(document.getElementById('waist').value);
+      const hip = parseFloat(document.getElementById('hip').value);
+      let result = '';
+
+      if (gender === 'male') {
+        const abdomenValue = !isNaN(abdomen) ? abdomen : waist;
+        if (!isNaN(height) && !isNaN(neck) && !isNaN(abdomenValue) && abdomenValue > neck) {
+          result = (
+            495 /
+            (1.0324 - 0.19077 * Math.log10(abdomenValue - neck) + 0.15456 * Math.log10(height)) -
+            450
+          ).toFixed(1);
+        }
+      } else if (gender === 'female') {
+        if (
+          !isNaN(height) &&
+          !isNaN(neck) &&
+          !isNaN(waist) &&
+          !isNaN(hip) &&
+          waist + hip > neck
+        ) {
+          result = (
+            495 /
+            (1.29579 - 0.35004 * Math.log10(waist + hip - neck) + 0.221 * Math.log10(height)) -
+            450
+          ).toFixed(1);
+        }
+      }
+
+      document.getElementById('body_fat').value = result;
+    }
+
+    function validateMetrics() {
+      const gender = document.getElementById('gender').value;
+      const neck = document.getElementById('neck');
+      const abdomen = document.getElementById('abdomen');
+      const waist = document.getElementById('waist');
+      const hip = document.getElementById('hip');
+
+      [neck, abdomen, waist, hip].forEach(el => el.classList.remove('error'));
+
+      let valid = true;
+      if (gender === 'male') {
+        if (!neck.value) { neck.classList.add('error'); valid = false; }
+        if (!abdomen.value) { abdomen.classList.add('error'); valid = false; }
+      } else if (gender === 'female') {
+        if (!neck.value) { neck.classList.add('error'); valid = false; }
+        if (!waist.value) { waist.classList.add('error'); valid = false; }
+        if (!hip.value) { hip.classList.add('error'); valid = false; }
+      }
+      return valid;
+    }
+
+    ['gender','height','neck','abdomen','waist','hip'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', () => {
+          updateBodyFat();
+          validateMetrics();
+        });
+      }
+    });
+
+    document.getElementById('fighterForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      if (!validateMetrics()) {
+        alert('Please fill in all required metrics.');
+        return;
+      }
+      const id = document.querySelector('input[name="id"]').value;
+      const formData = new FormData(this);
+      const payload = Object.fromEntries(formData.entries());
+      const resp = await fetch(`/api/fighters/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (resp.ok) {
+        window.location.reload();
+      } else {
+        alert('Failed to save fighter');
+      }
+    });
+
+    updateBodyFat();
+    validateMetrics();
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const historyData = {{ fighter.history | default([]) | tojson }};
+      if (historyData && historyData.length) {
+        const ctx = document.getElementById('performanceHistoryChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: historyData.map((_, i) => `Entry ${i + 1}`),
+            datasets: [{
+              label: 'Performance Score',
+              data: historyData,
+              borderColor: 'rgba(0, 255, 100, 1)',
+              backgroundColor: 'rgba(0, 255, 100, 0.2)',
+              tension: 0.3
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false }
+            }
+          }
+        });
+      } else {
+        document.getElementById('performanceHistoryChart').style.display = 'none';
+        const msg = document.createElement('p');
+        msg.className = 'text-muted';
+        msg.innerText = 'No performance history available.';
+        document.getElementById('history').appendChild(msg);
+      }
+    });
+  </script>
+  <script>
+    function openNDAModal() {
+      const modal = document.getElementById('ndaModal');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+    }
+    function closeNDAModal() {
+      const modal = document.getElementById('ndaModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>

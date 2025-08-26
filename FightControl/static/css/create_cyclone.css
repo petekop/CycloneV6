@@ -1,0 +1,172 @@
+/* ============================
+   CREATE CYCLONE — NEON THEME
+   ============================ */
+
+:root{
+  --neon-cyan:#00ffff;
+  --neon-yellow:#ffd900;
+  --neon-orange:#ff7a00;
+  --bg:#070b10;
+  --pane:#0b1117;
+  --stroke: rgba(0,255,255,.42);
+  --ink:#dff7ff;
+}
+
+*{box-sizing:border-box}
+body.neo-bg{
+  margin:0;
+  color:var(--ink);
+  background:radial-gradient(1200px 600px at 75% 30%, #0d1520, #06090d 60%) fixed;
+  font-family: Orbitron, Segoe UI, Arial, Helvetica, sans-serif;
+}
+
+/* ---------- header / nav ---------- */
+.topbar{display:flex;align-items:center;gap:16px;padding:10px 16px}
+.topbar h1{
+  margin:0 auto 0 0;width:100%;text-align:center;letter-spacing:.06em;
+  color:var(--ink);text-shadow:0 0 12px var(--neon-cyan)
+}
+.btn{
+  border:1px solid var(--neon-cyan);border-radius:12px;padding:8px 14px;
+  background:transparent;color:#dffbff;text-decoration:none;
+  box-shadow:0 0 8px var(--neon-cyan)
+}
+.btn.back{position:relative}
+.btn.primary{border-color:var(--neon-yellow);box-shadow:0 0 10px var(--neon-yellow);color:#121212;background:linear-gradient(#ffda00,#ffc300)}
+.btn.next{padding:8px 18px}
+
+/* ---------- layout ---------- */
+.grid{
+  display:grid;grid-template-columns:1.05fr .95fr;gap:24px;
+  padding:10px 18px 32px;max-width:1500px;margin:0 auto;
+}
+.panel{
+  background:var(--pane);border:2px solid var(--stroke);border-radius:14px;
+  padding:12px 14px;box-shadow:0 0 14px var(--stroke)
+}
+.preview{
+  background:var(--pane);border:2px solid var(--stroke);border-radius:14px;
+  padding:14px;display:flex;justify-content:center;align-items:center;
+  box-shadow:0 0 14px var(--stroke)
+}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.tab{
+  border:1px solid var(--neon-cyan);background:transparent;color:#bfefff;
+  border-radius:10px;padding:8px 12px;cursor:pointer;
+  box-shadow:0 0 8px var(--neon-cyan) inset,0 0 8px var(--neon-cyan);
+  user-select:none
+}
+.tab.on{border-color:var(--neon-yellow);box-shadow:0 0 10px var(--neon-yellow);color:#111;background:linear-gradient(#1b2026,#0b1117)}
+
+/* panes */
+.tabpane{display:none}
+.tabpane.on{display:block}
+
+/* ---------- fields ---------- */
+.field{margin:10px 0}
+label{display:block;color:var(--neon-yellow);margin-bottom:6px;letter-spacing:.06em}
+.chk{display:flex;align-items:center;gap:8px;color:#bfefff}
+.hint{font-size:.85rem;color:#8ad9ff;opacity:.85;margin-top:4px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+#hipRow{display:none;grid-template-columns:1fr}
+.right{display:flex;justify-content:flex-end}
+
+input[type="text"],input[type="number"],select{
+  width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--neon-cyan);
+  background:#081018;color:#e5fbff;
+  box-shadow:0 0 10px rgba(0,255,255,.2) inset,0 0 10px rgba(0,255,255,.25)
+}
+input[readonly]{opacity:.85}
+
+/* =========================
+   CARD PREVIEW (RIGHT SIDE)
+   ========================= */
+.card-frame{
+  position:relative;width:min(470px, 46vw);aspect-ratio:652/908;
+  filter:drop-shadow(0 0 14px rgba(0,255,255,.25));
+}
+.card-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.overlay{position:absolute;inset:0;pointer-events:none}
+
+/* The overlay displays info but must not block the UI */
+.preview .overlay{pointer-events:none}
+
+/* photo preview is hidden until .revealed is added */
+.ol-photo{
+  position:absolute; left:50%; top:18%; transform:translateX(-50%);
+  width:50%; aspect-ratio:1/1; object-fit:cover; border-radius:50%;
+  border:3px solid var(--neon-cyan);
+  box-shadow:0 0 18px var(--neon-cyan), 0 0 14px rgba(0,255,255,.6) inset;
+  background:#000;
+  opacity:0; visibility:hidden; transition:.25s ease;
+  z-index:2;
+}
+.ol-photo.revealed{opacity:1; visibility:visible}
+
+/* name high */
+.ol-name{
+  position:absolute; top:52.5%; left:50%; transform:translateX(-50%);
+  width:86%; text-align:center; color:var(--neon-yellow);
+  font-weight:900; letter-spacing:.1em;
+  font-size:clamp(22px, 3.6vw, 34px);
+  text-shadow:0 0 10px var(--neon-yellow), 0 0 18px var(--neon-orange);
+  z-index:3;
+}
+
+/* flag under name */
+.ol-flag{
+  position:absolute; top:60.5%; left:50%; transform:translateX(-50%);
+  width:46px; height:30px; object-fit:contain;
+  filter:drop-shadow(0 0 6px rgba(0,255,255,.7));
+  z-index:3; display:none;
+}
+
+/* compact stat pills INSIDE the card */
+.ol-brief{
+  position:absolute; left:8%; right:8%;
+  bottom:6.5%;                   /* safely above the card notch */
+  display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
+  z-index:3;
+}
+.info-pill{
+  background:rgba(0,0,0,.55);
+  border:1px solid var(--neon-cyan);
+  border-radius:12px;
+  padding:6px 8px; text-align:center;
+  box-shadow:0 0 8px rgba(0,255,255,.35) inset, 0 0 8px var(--neon-cyan);
+}
+.info-pill .lbl{ display:block; font-size:.68rem; color:var(--neon-cyan); letter-spacing:.14em }
+.info-pill .val{ display:block; margin-top:2px; color:var(--neon-yellow); font-weight:800; font-size:.92rem }
+
+/* =================
+   CHARTS + DOCS UI
+   ================= */
+.charts-wrap{display:grid;grid-template-columns:1.1fr 1fr;gap:14px}
+.chart-card{
+  background:#070b10;border:2px solid var(--neon-cyan);border-radius:12px;
+  box-shadow:0 0 12px var(--neon-cyan) inset, 0 0 8px var(--neon-cyan);
+  padding:10px;min-height:320px
+}
+.chart-title{color:var(--neon-yellow);letter-spacing:.12em;margin-bottom:6px}
+
+/* embedded Google Form / NDA */
+.embed-frame{
+  width:100%; height:68vh; min-height:520px; border:0; background:#0a0f12;
+  border-radius:12px; box-shadow:inset 0 0 18px rgba(0,255,255,.25);
+}
+
+/* -------------
+   RESPONSIVE
+   ------------- */
+@media (max-width:1200px){
+  .grid{grid-template-columns:1fr;gap:18px}
+  .preview{order:-1}
+  .card-frame{width:min(520px, 78vw)}
+  .embed-frame{height:62vh;min-height:480px}
+}
+@media (max-width:780px){
+  .ol-name{font-size:clamp(20px,4.6vw,28px)}
+  .info-pill .val{font-size:.86rem}
+}
