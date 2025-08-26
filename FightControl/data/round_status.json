@@ -1,0 +1,18 @@
+{
+  "state_internal": {
+    "status": "IDLE",
+    "round": 0,
+    "timestamps": {
+      "IDLE": "2025-08-26T14:49:16.416290"
+    }
+  },
+  "overlay_state": {
+    "status": "IDLE",
+    "round": 0
+  },
+  "status": "IDLE",
+  "round": 0,
+  "timestamps": {
+    "IDLE": "2025-08-26T14:49:16.416290"
+  }
+}

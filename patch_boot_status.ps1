@@ -1,5 +1,5 @@
 # patch_boot_status.ps1 - make boot route spawn .bat/.ps1/.lnk correctly
-param([string]$File = "C:\Cyclone\routes\boot_status.py")
+param([string]$File = "E:\\Cyclone\routes\boot_status.py")
 
 Write-Host "Patching $File" -ForegroundColor Cyan
 if (!(Test-Path $File)) { Write-Error "File not found: $File"; exit 1 }

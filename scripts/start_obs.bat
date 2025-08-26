@@ -1,6 +1,6 @@
 @echo off
 setlocal
-set "BASE=C:\Cyclone"
+set "BASE=E:\Cyclone"
 
 if exist "%BASE%\obs64 - Shortcut.lnk" (
   powershell -NoProfile -Command "Start-Process -FilePath '%BASE%\obs64 - Shortcut.lnk' -WindowStyle Minimized"
@@ -18,7 +18,7 @@ if exist "%BASE%\OBS\obs64.exe" (
 )
 
 echo ERROR: OBS not found. Looked for:
-echo   C:\Cyclone\obs64 - Shortcut.lnk
-echo   C:\Cyclone\obs64.exe
-echo   C:\Cyclone\OBS\obs64.exe
+echo   E:\Cyclone\obs64 - Shortcut.lnk
+echo   E:\Cyclone\obs64.exe
+echo   E:\Cyclone\OBS\obs64.exe
 exit /b 1

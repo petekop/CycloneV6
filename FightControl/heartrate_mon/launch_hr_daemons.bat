@@ -1,7 +1,7 @@
 @echo off
 setlocal
 
-set ROOT=C:\Cyclone
+set ROOT=E:\\Cyclone
 set VENV=%ROOT%\venv\Scripts\python.exe
 
 set HR_RED_MAC=A0:9E:1A:EB:9C:A5

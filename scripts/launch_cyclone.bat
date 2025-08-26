@@ -1,3 +1,2 @@
 @echo off
-powershell -ExecutionPolicy Bypass -File "launch_cyclone.ps1"
-pause
+powershell -ExecutionPolicy Bypass -File "E:\Cyclone\scripts\boot_v2.ps1"

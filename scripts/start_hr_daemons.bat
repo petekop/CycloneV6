@@ -1,6 +1,6 @@
 @echo off
 setlocal
-set "BASE=C:\Cyclone"
+set "BASE=E:\\Cyclone"
 set "PY=%BASE%\venv\Scripts\python.exe"
 
 if not exist "%PY%" (

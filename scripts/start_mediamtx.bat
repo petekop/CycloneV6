@@ -1,6 +1,6 @@
 @echo off
 setlocal
-set "BASE=C:\Cyclone"
+set "BASE=E:\Cyclone"
 set "MTX=%BASE%\CAMSERVER\mediamtx\mediamtx.exe"
 set "CFG=%BASE%\CAMSERVER\mediamtx\mediamtx_tcp_fixed_2025.yml"
 set "LOG=%BASE%\CAMSERVER\mediamtx\logs"
