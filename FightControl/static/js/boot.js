@@ -9,7 +9,7 @@
       const pct = Math.floor((j.step / Math.max(j.total || 1, 1)) * 100);
       if (bar) bar.style.width = pct + "%";
       if (txt) txt.textContent = (j.message ? (pct + "% — " + j.message) : (pct + "%"));
-      if (j.done) { location.href = "/index"; return; }
+      if (j.done) { location.href="/index"; return; }
     } catch (e) { /* ignore, keep polling */ }
     setTimeout(poll, 500);
   }
